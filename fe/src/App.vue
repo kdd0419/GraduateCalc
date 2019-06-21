@@ -39,12 +39,20 @@
 
 
 export default {
+  methods: {
+    getGrad() {
+      var start = new Date("2017-03-01").getTime()
+      var now = new Date().getTime()
+      var end = new Date("2020-01-10").getTime()
+      return Math.floor((now-start)/(end-start))
+    }
+  },
   data () {
     return {
       value: [
         {
           title: '졸업일',
-          value: 70
+          value: this.getGrad()
         },
         {
           title: '집으로 돌아간다!',
@@ -53,5 +61,6 @@ export default {
       ]
     }
   }
+
 }
 </script>
