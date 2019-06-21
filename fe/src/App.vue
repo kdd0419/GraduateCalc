@@ -44,7 +44,7 @@ export default {
       var start = new Date("2017-03-01").getTime()
       var now = new Date().getTime()
       var end = new Date("2020-01-10").getTime()
-      return Math.floor((now-start)/(end-start))
+      return (now-start)/(end-start)*100
     }
   },
   data () {
