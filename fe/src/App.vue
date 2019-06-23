@@ -44,7 +44,7 @@ export default {
       var startTime = new Date(start).getTime()
       var now = new Date().getTime()
       var endTime = new Date(end).getTime()
-      return (now-startTime)/(endTime-startTime)*100
+      return Math.round((now-startTime)/(endTime-startTime)*1000)/10
     }
   },
   data () {
