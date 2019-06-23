@@ -40,11 +40,11 @@
 
 export default {
   methods: {
-    getGrad() {
-      var start = new Date("2017-03-01").getTime()
+    getTimePersent(start, end) {
+      var startTime = new Date(start).getTime()
       var now = new Date().getTime()
-      var end = new Date("2020-01-10").getTime()
-      return (now-start)/(end-start)*100
+      var endTime = new Date(end).getTime()
+      return (now-startTime)/(endTime-startTime)*100
     }
   },
   data () {
@@ -52,11 +52,11 @@ export default {
       value: [
         {
           title: '졸업일',
-          value: this.getGrad()
+          value: this.getTimePersent('2017-03-01', '2020-01-11')
         },
         {
           title: '집으로 돌아간다!',
-          value: 80
+          value: this.getTimePersent('2019-06-24 00:00:00', '2019-06-28')
         }
       ]
     }
