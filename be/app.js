@@ -17,6 +17,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use('/api', require('./routes/api'));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
@@ -39,3 +42,11 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+const mongoose = require('mongoose')
+
+const User = require('./model/User')
+const Time = require('./model/time')
+mongoose.connect('mongodb://localhost:27017/local', { useNewUrlParser: true }, (err) => {
+   if (err) return console.error(err)
+   console.log('mongoose connected!')
