@@ -4,26 +4,102 @@
   `<v-flex xs12 sm6 offset-sm3>
     <v-card>
       <v-list two-line>
+        <template v-for="(item, i) in value">
         <v-list-tile
-          value="true"
-          v-for="(item, i) in value"
-          :key="i"
-          :to="item.to"
+          :key="item.title"
+          class="pt-2"
         >
           <v-list-tile-content>
-            <v-list-tile-title>{{item.title}}</v-list-tile-title>
+            <v-list-tile-title class="indigo--text title font-weight-bold">{{item.title}}</v-list-tile-title>
             <v-list-tile-sub-title>
               <v-progress-linear
                 v-model="item.value"
-                height="20"
+                height="22"
                 color="info"
               >
-                <span class="black--text">{{item.value}}%</span>
+                <span class="black--text ml-3 subheading">{{item.value}}%</span>
               </v-progress-linear>
             </v-list-tile-sub-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-divider :key="i"></v-divider>
+      </template>
       </v-list>
+      <v-btn large color="primary" dark @click="add.dialog = true">D-Day 항목 추가</v-btn>
+
+    <v-dialog v-model="add.dialog" persistent max-width="800px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">D-DAY 추가 항목 입력창</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12 sm12 d-flex>
+              <v-text-field
+                label="해야 할 일 이름 (제목)"
+                v-model="add.title"
+              ></v-text-field>
+              </v-flex>
+              <v-flex xs9 sm9>
+                <v-menu
+                   v-model="add.startTimeMenu"
+                   :close-on-content-click="false"
+                   :nudge-right="0"
+                   lazy
+                   transition="scale-transition"
+                   offset-y
+                   full-width
+                   min-width="290px"
+                 >
+                   <template v-slot:activator="{ on }">
+                     <v-text-field
+                       v-model="add.startTime"
+                       label="시작 일자"
+                       prepend-icon="event"
+                       readonly
+                       v-on="on"
+                     ></v-text-field>
+                   </template>
+                   <v-date-picker v-model="add.startTime" @input="add.startTimeMenu = false; chkStartIsToday(add)"></v-date-picker>
+                 </v-menu>
+              </v-flex>
+              <v-flex xs3 sm3 d-flex>
+                <v-checkbox label="현재 시간으로 설정" v-model="add.setStartTimeNow" @change="setStartTime(add)"></v-checkbox>
+              </v-flex>
+              <v-flex xs12 sm12>
+                <v-menu
+                   v-model="add.endTimeMenu"
+                   :close-on-content-click="false"
+                   :nudge-right="0"
+                   lazy
+                   transition="scale-transition"
+                   offset-y
+                   full-width
+                   min-width="290px"
+                 >
+                   <template v-slot:activator="{ on }">
+                     <v-text-field
+                       v-model="add.endTime"
+                       label="종료 일자"
+                       prepend-icon="event"
+                       readonly
+                       v-on="on"
+                     ></v-text-field>
+                   </template>
+                   <v-date-picker v-model="add.endTime" @input="add.endTimeMenu = false"></v-date-picker>
+                 </v-menu>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="add.dialog = false">취소  </v-btn>
+          <v-btn color="blue darken-1" flat @click="add.dialog = false">항목 추가</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-card>
   </v-flex>
 </v-layout>
@@ -39,6 +115,34 @@ export default {
       var now = new Date().getTime()
       var endTime = new Date(end).getTime()
       return Math.round((now-startTime)/(endTime-startTime)*1000)/10
+    },
+
+    getSunday() {
+      var today = new Date();
+      var sun = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay())
+      sun.setHours(21, 0, 0, 0)
+      return sun.getTime()
+    },
+
+    getFriday() {
+      var today = new Date();
+      var fri = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay()+5)
+      fri.setHours(16,0,0,0)
+      return fri.getTime()
+    },
+
+    setStartTime(menu) {
+      if(menu.setStartTimeNow===true){
+        menu.startTime = new Date().toISOString().substr(0, 10)
+      }else{
+        menu.startTime = ''
+      }
+    },
+
+    chkStartIsToday(menu) {
+      if(menu.startTime !== new Date().toISOString().substr(0, 10)){
+        menu.setStartTimeNow = false
+      }
     }
   },
   data () {
@@ -50,9 +154,18 @@ export default {
         },
         {
           title: '집으로 돌아간다!',
-          value: this.getTimePersent('2019-06-24 00:00:00', '2019-06-28')
+          value: this.getTimePersent(this.getSunday(), this.getFriday())
         }
-      ]
+      ],
+      add: {
+        dialog: false,
+        title: '',
+        startTime: '',
+        setStartTimeNow: false,
+        startTimeMenu: false,
+        endTime: '',
+        endTimeMenu: false
+      }
     }
   }
 
