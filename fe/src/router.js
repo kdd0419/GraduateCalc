@@ -9,13 +9,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('./views/progress.vue')
-    },
-    {
-      path: '/login',
       name: 'login',
       component: () => import('./views/login.vue')
+    },
+    {
+      path: '/main',
+      name: 'main',
+      component: () => import('./views/progress.vue')
     }
   ]
 })
