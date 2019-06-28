@@ -5,14 +5,14 @@
       <v-card class="pa-4">
       <v-text-field
         label="학번"
-        
+
         placeholder="ex) 1101"
       ></v-text-field>
       <v-text-field
         label="비밀번호"
 
       ></v-text-field>
-      <v-btn color="primary" dark large>로그인</v-btn>
+      <v-btn color="primary" dark large @click="login()">로그인</v-btn>
       <v-btn color="primary" dark large @click="dialog = true">회원가입</v-btn>
       <v-dialog v-model="dialog" persistent max-width="800px">
         <v-card>
@@ -70,6 +70,12 @@ export default {
       year: ['1', '2', '3'],
       classes: ['1', '2', '3', '4'],
       numbers: [...Array(22).keys()].map(i=> i+1)
+    }
+  },
+  methods: {
+    login() {
+      location.href = '/main'
+      
     }
   }
 }

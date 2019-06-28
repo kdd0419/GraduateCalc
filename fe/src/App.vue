@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline">
+    <v-toolbar app class="primary">
+      <v-toolbar-title class="headline white--text">
         <span>I want to go home</span>
       </v-toolbar-title>
     </v-toolbar>
