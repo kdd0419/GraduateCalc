@@ -19,8 +19,14 @@
               >
                 <span class="black--text ml-3 subheading">{{item.value}}%</span>
               </v-progress-linear>
+
             </v-list-tile-sub-title>
           </v-list-tile-content>
+          <v-list-tile-action>
+          <v-btn color="primary" icon ripple @click="update.dialog = true">
+            <v-icon>edit</v-icon>
+          </v-btn>
+        </v-list-tile-action>
         </v-list-tile>
         <v-divider :key="i"></v-divider>
       </template>
@@ -95,8 +101,82 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="add.dialog = false">취소  </v-btn>
+          <v-btn color="grey darken-1" flat @click="add.dialog = false">취소  </v-btn>
           <v-btn color="blue darken-1" flat @click="add.dialog = false">항목 추가</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="update.dialog" persistent max-width="800px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">D-DAY 항목 수정 창</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12 sm12 d-flex>
+              <v-text-field
+                label="해야 할 일 이름 (제목)"
+                v-model="update.title"
+              ></v-text-field>
+              </v-flex>
+              <v-flex xs9 sm9>
+                <v-menu
+                   v-model="update.startTimeMenu"
+                   :close-on-content-click="false"
+                   :nudge-right="0"
+                   lazy
+                   transition="scale-transition"
+                   offset-y
+                   full-width
+                   min-width="290px"
+                 >
+                   <template v-slot:activator="{ on }">
+                     <v-text-field
+                       v-model="update.startTime"
+                       label="시작 일자"
+                       prepend-icon="event"
+                       readonly
+                       v-on="on"
+                     ></v-text-field>
+                   </template>
+                   <v-date-picker v-model="update.startTime" @input="update.startTimeMenu = false; chkStartIsToday(update)"></v-date-picker>
+                 </v-menu>
+              </v-flex>
+              <v-flex xs3 sm3 d-flex>
+                <v-checkbox label="현재 시간으로 설정" v-model="update.setStartTimeNow" @change="setStartTime(update)"></v-checkbox>
+              </v-flex>
+              <v-flex xs12 sm12>
+                <v-menu
+                   v-model="update.endTimeMenu"
+                   :close-on-content-click="false"
+                   :nudge-right="0"
+                   lazy
+                   transition="scale-transition"
+                   offset-y
+                   full-width
+                   min-width="290px"
+                 >
+                   <template v-slot:activator="{ on }">
+                     <v-text-field
+                       v-model="update.endTime"
+                       label="종료 일자"
+                       prepend-icon="event"
+                       readonly
+                       v-on="on"
+                     ></v-text-field>
+                   </template>
+                   <v-date-picker v-model="update.endTime" @input="update.endTimeMenu = false"></v-date-picker>
+                 </v-menu>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey darken-1" flat @click="update.dialog = false">수정 취소</v-btn>
+          <v-btn color="red darken-1" flat @click="update.dialog = false">항목 삭제</v-btn>
+          <v-btn color="blue darken-1" flat @click="update.dialog = false">항목 수정</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -165,7 +245,17 @@ export default {
         startTimeMenu: false,
         endTime: '',
         endTimeMenu: false
+      },
+      update: {
+        dialog: false,
+        title: '',
+        startTime: '',
+        setStartTimeNow: false,
+        startTimeMenu: false,
+        endTime: '',
+        endTimeMenu: false
       }
+
     }
   }
 
