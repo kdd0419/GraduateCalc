@@ -50,3 +50,4 @@ const Time = require('./model/time')
 mongoose.connect('mongodb://localhost:27017/local', { useNewUrlParser: true }, (err) => {
    if (err) return console.error(err)
    console.log('mongoose connected!')
+});
