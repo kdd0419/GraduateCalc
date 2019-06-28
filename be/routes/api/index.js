@@ -6,6 +6,7 @@ const User = require('../../model/User')
 
 
 router.use('/user', require('./user'));
+router.use('/time', require('./time'));
 
 
 
