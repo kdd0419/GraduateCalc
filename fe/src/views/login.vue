@@ -5,12 +5,15 @@
       <v-card class="pa-4">
       <v-text-field
         label="학번"
-        v-model="login_num"
+        v-model="login_form.id"
         placeholder="ex) 1101"
+        required
       ></v-text-field>
       <v-text-field
         label="비밀번호"
-        v-model="login_pw"
+        v-model="login_form.pw"
+        type="password"
+        required
       ></v-text-field>
       <v-btn color="primary" dark large @click="login()">로그인</v-btn>
       <v-btn color="primary" dark large @click="dialog = true">회원가입</v-btn>
@@ -62,6 +65,19 @@
     </v-card>
     </v-flex>
     </v-layout>
+    <v-snackbar
+      v-model="snackbar"
+      top
+    >
+      {{ sbMsg }}
+      <v-btn
+        color="pink"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -75,13 +91,17 @@ export default {
       classes: ['1', '2', '3', '4'],
       numbers: [...Array(22).keys()].map(i=> i+1),
       users: [],
-      login_num: '',
-      login_pw: '',
+      login_form: {
+        id: '',
+        pw: ''
+      },
       selectGrade: '',
       selectClass: '',
       selectNum: '',
       signin_name: '',
-      signin_pw: ''
+      signin_pw: '',
+      snackbar: false,
+      sbMsg: ''
     }
   },
   mounted () {
@@ -89,9 +109,16 @@ export default {
   },
   methods: {
     login() {
-
-      location.href = '/main'
-
+      axios.post('http://localhost:3000/api/user/in', this.login_form)
+        .then((r) => {
+          if (!r.data.success) return this.pop(r.data.msg)
+          else this.pop("로그인에 성공하셨습니다.")
+          this.users = r.data.users
+          location.href='/main'
+        })
+        .catch((e)=>{
+          this.pop(e.message)
+        })
     },
 
     getUsers () {
@@ -100,10 +127,13 @@ export default {
           this.users = r.data.users
         })
     },
-    getOneUsers(id){
-      axios.get(`http://localhost:3000/api/user/${id}`)
+    getOneUsers(){
+      axios.get(`http://localhost:3000/api/user/`, this.login_form)
         .then((r) => {
           this.users = r.data.users
+        })
+        .catch((e)=>{
+          this.pop(e.message)
         })
     },
     postUser () {
@@ -118,6 +148,16 @@ export default {
         pw: this.signin_pw
       // user: 'postMan'
       })
+      .then(() => {
+        this.pop("회원가입에 성공했습니다")
+      })
+      .catch(() => {
+        this.pop("회원가입에 실패했습니다")
+      })
+    },
+    pop (msg) {
+      this.snackbar = true
+      this.sbMsg = msg
     }
   }
 }

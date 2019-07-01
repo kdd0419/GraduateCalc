@@ -13,15 +13,20 @@ router.get('/', function(req, res, next) {
       })
 });
 
-router.get('/:id', function(req, res, next) {
-  const id = req.params.id
-  const pw = req.body
-  User.findOne({ id: id, pw: pw })
+router.post('/in', function(req, res, next) {
+  const {id, pw} = req.body
+  if (!id) return res.send({ success: false, msg: '학번이 입력되지 않았습니다.'})
+  if (!pwd) return res.send({ success: false, msg: '비밀번호가 입력되지 않았습니다.'})
+  User.findOne({id: id})
+  .then((r)=>{
+    if (!r) throw new Error('일치하는 학번, 비밀번호가 없습니다.')
+    if (r.pw !== pw) throw new Error('일치하는 학번, 비밀번호가 없습니다.')
+  })
     .then((r) => {
       res.send({ success: true, msg: r })
     })
     .catch((e) => {
-      console.error(e.message)
+      res.send({success:false, msg: e.message})
     })
 });
 
