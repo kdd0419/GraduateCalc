@@ -25,4 +25,17 @@ router.post('/', (req, res, next) => {
       })
 })
 
+router.put('/:id', (req, res, next) => {
+  const _id = req.params.id
+  const { id, name, start, end } = req.body
+  Time.updateOne({ _id: _id }, { $set: { id, name, start, end }})
+    .then(r => {
+      res.send({ success: true, msg: r })
+    })
+    .catch(e => {
+      res.send({ success: false, msg: e.message })
+    })
+  // res.send({ success: true, msg: 'put ok' })
+})
+
 module.exports = router;
