@@ -69,13 +69,54 @@ export default {
       dialog: false,
       year: ['1', '2', '3'],
       classes: ['1', '2', '3', '4'],
-      numbers: [...Array(22).keys()].map(i=> i+1)
+      numbers: [...Array(22).keys()].map(i=> i+1),
+      users = []
     }
+  },
+  mounted () {
+    //this.getUsers()
   },
   methods: {
     login() {
       location.href = '/main'
-      
+
+    },
+
+    getUsers () {
+      axios.get('http://localhost:3000/api/user')
+        .then((r) => {
+          this.users = r.data.users
+          console.log(r)
+        })
+        .catch((e) => {
+          console.error(e.message)
+        })
+    },
+    getOneUsers(id){
+      axios.get(`http://localhost:3000/api/user/${id}`)
+        .then((r) => {
+          this.users = r.data.users
+          console.log(r)
+        })
+        .catch((e) => {
+          console.error(e.message)
+        })
+    },
+    postUser () {
+      axios.post('http://localhost:3000/api/user', {
+        id: ,
+        name: ,
+        pw:
+      // user: 'postMan'
+      })
+        .then((r) => {
+          this.pop('사용자 등록 완료')
+          
+        })
+        .catch((e) => {
+          console.error(e.message)
+          this.pop('e.message')
+        })
     }
   }
 }

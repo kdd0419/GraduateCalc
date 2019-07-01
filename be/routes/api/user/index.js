@@ -13,6 +13,18 @@ router.get('/', function(req, res, next) {
       })
 });
 
+router.get('/:id', function(req, res, next) {
+  const id = req.params.id
+  const pw = req.body
+  User.findOne({ id: id, pw: pw })
+    .then((r) => {
+      res.send({ success: true, msg: r })
+    })
+    .catch((e) => {
+      console.error(e.message)
+    })
+});
+
 router.post('/', (req, res, next) => {
   const { id, name, pw } = req.body
   const u = new User({ id, name, pw })
