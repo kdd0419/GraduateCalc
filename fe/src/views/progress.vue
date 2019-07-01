@@ -10,14 +10,14 @@
           class="pt-2"
         >
           <v-list-tile-content>
-            <v-list-tile-title class="indigo--text title font-weight-bold">{{item.title}}</v-list-tile-title>
+            <v-list-tile-title class="indigo--text title font-weight-bold">{{item.title}} / {{item.day}}</v-list-tile-title>
             <v-list-tile-sub-title>
               <v-progress-linear
                 v-model="item.value"
                 height="22"
                 color="info"
               >
-                <span class="black--text ml-3 subheading">{{item.value}}%</span>
+                <span class="black--text ml-3 subheading">{{item.value}}% {{item.left_time}}일</span>
               </v-progress-linear>
 
             </v-list-tile-sub-title>
@@ -223,6 +223,11 @@ export default {
       if(menu.startTime !== new Date().toISOString().substr(0, 10)){
         menu.setStartTimeNow = false
       }
+    },
+    getDDay(end){
+      var now = new Date().getTime()
+      var endTime = new Date(end).getTime()
+      return Math.floor((endTime-now)/(1000*60*60*24))
     }
   },
   data () {
@@ -230,11 +235,15 @@ export default {
       value: [
         {
           title: '졸업일',
-          value: this.getTimePersent('2017-03-01', '2020-01-11')
+          day: '2020-01-11',
+          value: this.getTimePersent('2017-03-01', '2020-01-11'),
+          left_time: this.getDDay('2020-01-11')
         },
         {
           title: '집으로 돌아간다!',
-          value: this.getTimePersent(this.getSunday(), this.getFriday())
+          day: new Date(this.getFriday()).toISOString().substr(0, 10),
+          value: this.getTimePersent(this.getSunday(), this.getFriday()),
+          left_time: this.getDDay(this.getFriday())
         }
       ],
       add: {

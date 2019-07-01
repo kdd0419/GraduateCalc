@@ -4,6 +4,10 @@
       <v-toolbar-title class="headline white--text">
         <span>I want to go home</span>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+  <v-btn icon>
+    <v-icon>more_vert</v-icon>
+  </v-btn>
     </v-toolbar>
     <v-content :style="{'background-image': 'url(' + require('./back.png') + ')', 'background-size': '100% 100%'}">
       <router-view></router-view>
@@ -14,7 +18,7 @@
           editable
           step="1"
         >
-          동국이를 때리세요
+          회원가입을 하세요
         </v-stepper-step>
 
         <v-divider></v-divider>
@@ -23,7 +27,7 @@
           editable
           step="2"
         >
-          Create an ad group
+          로그인을 하세요
         </v-stepper-step>
 
         <v-divider></v-divider>
@@ -32,7 +36,7 @@
           step="3"
           editable
         >
-          Create an ad
+          일정을 추가, 관리하세요
         </v-stepper-step>
       </v-stepper-header>
     </v-stepper>
