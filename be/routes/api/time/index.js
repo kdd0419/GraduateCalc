@@ -13,6 +13,17 @@ router.get('/', function(req, res, next) {
       })
 });
 
+router.get('/:id', function(req, res, next) {
+  const id = req.params.id
+    Time.find({id: id})
+      .then(r => {
+        res.send({ success : true, users: r})
+      })
+      .catch(e => {
+        res.send({ success : false})
+      })
+});
+
 router.post('/', (req, res, next) => {
   const { id, name, start, end } = req.body
   const u = new Time({ id, name, pw })
