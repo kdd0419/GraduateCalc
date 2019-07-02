@@ -117,6 +117,8 @@ export default {
   },
   methods: {
     login() {
+      if (!this.login_form.id || this.login_form.id.length <= 0) return this.pop('학번이 입력되지 않았습니다.')
+      if (!this.login_form.pw || this.login_form.pw.length <= 0) return this.pop('비밀번호가 입력되지 않았습니다.')
       axios.post('http://localhost:3000/api/user/in', this.login_form)
         .then((r) => {
           if (!r.data.success) return this.pop(r.data.msg)
