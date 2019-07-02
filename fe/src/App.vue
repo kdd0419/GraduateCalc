@@ -19,7 +19,7 @@
           editable
           step="1"
         >
-          회원가입을 하세요
+          <v-btn flat>회원가입을 하세요</v-btn>
         </v-stepper-step>
 
         <v-divider></v-divider>
@@ -28,7 +28,7 @@
           editable
           step="2"
         >
-          로그인을 하세요
+        <v-btn flat>로그인을 하세요</v-btn>
         </v-stepper-step>
 
         <v-divider></v-divider>
@@ -37,7 +37,7 @@
           step="3"
           editable
         >
-          일정을 추가, 관리하세요
+        <v-btn flat>일정을 추가, 관리하세요</v-btn>
         </v-stepper-step>
       </v-stepper-header>
     </v-stepper> -->
