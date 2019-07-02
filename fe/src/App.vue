@@ -5,6 +5,7 @@
         <span>I want to go home</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <span class="subheading white--text">{{user_name}} 님</span>
   <v-btn icon>
     <v-icon>more_vert</v-icon>
   </v-btn>
@@ -12,7 +13,7 @@
     <v-content :style="{'background-image': 'url(' + require('./back.png') + ')', 'background-size': '100% 100%'}">
       <router-view></router-view>
     </v-content>
-    <v-stepper non-linear>
+    <!-- <v-stepper non-linear>
       <v-stepper-header>
         <v-stepper-step
           editable
@@ -39,10 +40,23 @@
           일정을 추가, 관리하세요
         </v-stepper-step>
       </v-stepper-header>
-    </v-stepper>
+    </v-stepper> -->
   </v-app>
 </template>
 
 <script>
+  export default {
+    data() {
+      return {
+        user_name: localStorage.user_name
+      }
+    },
+    
+    updated(){
+      this.user_name = localStorage.user_name
+    },
+    methods: {
 
+    }
+  }
 </script>

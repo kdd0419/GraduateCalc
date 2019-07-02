@@ -3,20 +3,26 @@
     <v-layout row wrap>
     <v-flex xs12 sm6 offset-sm3>
       <v-card class="pa-4">
+        <v-flex xs12 sm12 d-flex>
       <v-text-field
         label="학번"
         v-model="login_form.id"
         placeholder="ex) 1101"
         required
       ></v-text-field>
+    </v-flex>
+    <v-flex xs12 sm12 d-flex>
       <v-text-field
         label="비밀번호"
         v-model="login_form.pw"
         type="password"
         required
       ></v-text-field>
+    </v-flex>
+    <v-flex xs6 sm6 offset-xs6 offset-sm6 d-flex>
       <v-btn color="primary" dark large @click="login()">로그인</v-btn>
       <v-btn color="primary" dark large @click="dialog = true">회원가입</v-btn>
+    </v-flex>
       <v-dialog v-model="dialog" persistent max-width="800px">
         <v-card>
           <v-card-title>
@@ -104,8 +110,10 @@ export default {
       sbMsg: ''
     }
   },
-  mounted () {
-    //this.getUsers()
+  created () {
+    if(localStorage.user_id){
+      location.href = '/main'
+    }
   },
   methods: {
     login() {
@@ -113,7 +121,8 @@ export default {
         .then((r) => {
           if (!r.data.success) return this.pop(r.data.msg)
           else this.pop("로그인에 성공하셨습니다.")
-          this.users = r.data.users
+          localStorage.setItem('user_id', this.login_form.id)
+          localStorage.setItem('user_name', r.data.msg.name)
           location.href='/main'
         })
         .catch((e)=>{
@@ -128,7 +137,7 @@ export default {
         })
     },
     getOneUsers(){
-      axios.get(`http://localhost:3000/api/user/`, this.login_form)
+      axios.get(`http://localhost:3000/api/user/${this.login_form.id}`, this.login_form.pw)
         .then((r) => {
           this.users = r.data.users
         })
@@ -146,10 +155,13 @@ export default {
         id: signin_id,
         name: this.signin_name,
         pw: this.signin_pw
-      // user: 'postMan'
       })
-      .then(() => {
-        this.pop("회원가입에 성공했습니다")
+      .then((r) => {
+        if(r.data.success){
+          this.pop("회원가입에 성공했습니다")
+          location.href = '/'
+        }
+        else this.pop("회원가입에 실패했습니다")
       })
       .catch(() => {
         this.pop("회원가입에 실패했습니다")
