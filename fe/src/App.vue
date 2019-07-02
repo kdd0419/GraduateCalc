@@ -5,7 +5,7 @@
         <span>I want to go home</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <span class="subheading white--text">{{user_name}} 님</span>
+      <span class="subheading white--text">{{user_name}}</span>
   <v-btn icon>
     <v-icon>more_vert</v-icon>
   </v-btn>
@@ -48,12 +48,15 @@
   export default {
     data() {
       return {
-        user_name: localStorage.user_name
+        user_name: ''
       }
     },
-    
+
     updated(){
-      this.user_name = localStorage.user_name
+      if(localStorage.user_name){
+        this.user_name = localStorage.user_name+" 님"
+
+      }
     },
     methods: {
 
