@@ -2,7 +2,7 @@
   <v-container fill-height>
     <v-layout row wrap>
   <v-flex xs12 sm8 offset-sm2>
-    <v-card>
+    <v-card class="mt-5">
       <v-list two-line>
         <template v-for="(item, i) in value">
         <v-list-tile
@@ -28,10 +28,10 @@
           </v-btn>
         </v-list-tile-action>
         </v-list-tile>
-        <v-divider :key="i"></v-divider>
+        <v-divider :key="i" v-show="value.length-1 !== i"></v-divider>
       </template>
       </v-list>
-      <v-btn large color="primary" dark @click="add.dialog = true">D-Day 항목 추가</v-btn>
+      <v-btn large color="primary" block dark @click="add.dialog = true">D-Day 항목 추가</v-btn>
 
     <v-dialog v-model="add.dialog" persistent max-width="800px">
       <v-card>
