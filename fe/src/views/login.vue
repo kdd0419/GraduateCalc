@@ -2,7 +2,7 @@
   <v-container fill height>
     <v-layout row wrap>
     <v-flex xs12 sm6 offset-sm3>
-      <v-card class="pa-4">
+      <v-card class="pa-4 mt-5">
         <v-flex xs12 sm12 d-flex>
       <v-text-field
         label="학번"
@@ -63,8 +63,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="dialog = false">취소  </v-btn>
-            <v-btn color="blue darken-1" flat @click="postUser()">회원가입</v-btn>
+            <v-btn color="grey darken-1" flat @click="dialog = false">취소  </v-btn>
+            <v-btn color="primary" flat @click="postUser()">회원가입</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -77,7 +77,7 @@
     >
       {{ sbMsg }}
       <v-btn
-        color="pink"
+        color="primary"
         flat
         @click="snackbar = false"
       >
@@ -148,6 +148,11 @@ export default {
         })
     },
     postUser () {
+      if(!this.selectGrade||this.selectGrade.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.selectClass||this.selectClass.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.selectNum||this.selectNum.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.signin_name||this.signin_name.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.signin_pw||this.signin_pw.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
       this.dialog = false
       if(this.selectNum < 10){
         this.selectNum = '0' + this.selectNum

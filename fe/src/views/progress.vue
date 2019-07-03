@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height>
     <v-layout row wrap>
-  <v-flex xs12 sm6 offset-sm3>
+  <v-flex xs12 sm8 offset-sm2>
     <v-card>
       <v-list two-line>
         <template v-for="(item, i) in value">
@@ -23,7 +23,7 @@
             </v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
-          <v-btn color="primary" icon ripple @click="update.dialog = true">
+          <v-btn v-if="i >= 2" color="primary" icon ripple @click="openEditDialog(item)">
             <v-icon>edit</v-icon>
           </v-btn>
         </v-list-tile-action>
@@ -47,7 +47,7 @@
                 v-model="add.title"
               ></v-text-field>
               </v-flex>
-              <v-flex xs9 sm9>
+              <v-flex xs8 sm10>
                 <v-menu
                    v-model="add.startTimeMenu"
                    :close-on-content-click="false"
@@ -70,8 +70,8 @@
                    <v-date-picker v-model="add.startTime" @input="add.startTimeMenu = false; chkStartIsToday(add)"></v-date-picker>
                  </v-menu>
               </v-flex>
-              <v-flex xs3 sm3 d-flex>
-                <v-checkbox label="현재 시간으로 설정" v-model="add.setStartTimeNow" @change="setStartTime(add)"></v-checkbox>
+              <v-flex xs4 sm2 d-flex>
+                <v-checkbox label="오늘로 설정" v-model="add.setStartTimeNow" @change="setStartTime(add)"></v-checkbox>
               </v-flex>
               <v-flex xs12 sm12>
                 <v-menu
@@ -144,7 +144,7 @@
                  </v-menu>
               </v-flex>
               <v-flex xs3 sm3 d-flex>
-                <v-checkbox label="현재 시간으로 설정" v-model="update.setStartTimeNow" @change="setStartTime(update)"></v-checkbox>
+                <v-checkbox label="오늘로 설정" v-model="update.setStartTimeNow" @change="setStartTime(update)"></v-checkbox>
               </v-flex>
               <v-flex xs12 sm12>
                 <v-menu
@@ -175,8 +175,8 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey darken-1" flat @click="update.dialog = false">수정 취소</v-btn>
-          <v-btn color="red darken-1" flat @click="update.dialog = false">항목 삭제</v-btn>
-          <v-btn color="blue darken-1" flat @click="update.dialog = false">항목 수정</v-btn>
+          <v-btn color="red darken-1" flat @click="deleteDDay()">항목 삭제</v-btn>
+          <v-btn color="blue darken-1" flat @click="editDDay()">항목 수정</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -189,7 +189,7 @@
 >
   {{ sbMsg }}
   <v-btn
-    color="pink"
+    color="primary"
     flat
     @click="snackbar = false"
   >
@@ -208,20 +208,21 @@ export default {
       var startTime = new Date(start).getTime()
       var now = new Date().getTime()
       var endTime = new Date(end).getTime()
+      now = new Date(now - new Date().getTimezoneOffset()*60*1000).getTime()
       return Math.round((now-startTime)/(endTime-startTime)*1000)/10
     },
 
     getSunday() {
       var today = new Date();
-      var sun = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay())
-      sun.setHours(21, 0, 0, 0)
+      var sun = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay()+1)
+      sun.setHours(6, 0, 0, 0)
       return sun.getTime()
     },
 
     getFriday() {
       var today = new Date();
-      var fri = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay()+5)
-      fri.setHours(16,0,0,0)
+      var fri = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay()+6)
+      fri.setHours(1,0,0,0)
       return fri.getTime()
     },
 
@@ -241,12 +242,16 @@ export default {
     getDDay(end){
       var now = new Date().getTime()
       var endTime = new Date(end).getTime()
+      now = new Date(now - new Date().getTimezoneOffset()*60*1000).getTime()
       var dur = endTime-now
       var left_day = Math.floor((dur)/(1000*60*60*24))
       var left_hour = Math.floor((dur%(1000*60*60*24))/(1000*60*60))
       return "( D- "+left_day+" days "+ left_hour + " hours )"
     },
     addDDay(){
+      if(!this.add.title||this.add.title.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.add.startTime||this.add.startTime.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.add.endTime||this.add.endTime.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
       this.add.dialog = false
       axios.post('http://localhost:3000/api/time/', {
         id: localStorage.user_id,
@@ -269,7 +274,7 @@ export default {
       axios.get(`http://localhost:3000/api/time/${localStorage.user_id}`)
         .then((r) => {
           this.value = this.value.slice(0,2)
-          var val_rlt = r.data.users
+          var val_rlt = r.data.times
           while(val_rlt.length > 0){
             var v = val_rlt.pop()
             v.left_time = this.getDDay(v.end)
@@ -281,6 +286,43 @@ export default {
     pop (msg) {
       this.snackbar = true
       this.sbMsg = msg
+    },
+    editDDay(){
+      if(!this.update.title||this.update.title.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.update.startTime||this.update.startTime.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      if(!this.update.endTime||this.update.endTime.legnth <= 0) return this.pop('주어진 항목을 입력하지 않았습니다')
+      axios.put(`http://localhost:3000/api/time/${this.update.item_id}`,{
+        id: localStorage.user_id,
+        name: this.update.title,
+        start: this.update.startTime,
+        end: this.update.endTime
+      })
+      .then(() => {
+        this.pop('D-Day 항목 수정 완료되었습니다')
+        this.update.dialog = false
+        this.getAllDDay()
+      })
+      .catch(()=>{
+        this.pop('D-Day 항목 수정에 실패했습니다')
+      })
+    },
+    openEditDialog(item){
+      this.update.title = item.name
+      this.update.startTime = item.start
+      this.update.endTime = item.end
+      this.update.dialog = true
+      this.update.item_id = item._id
+    },
+    deleteDDay(){
+      this.update.dialog = false
+      axios.delete(`http://localhost:3000/api/time/${this.update.item_id}`)
+        .then(() => {
+          this.pop('해당 D-Day 항목이 삭제되었습니다')
+          this.getAllDDay()
+        })
+        .catch(() => {
+          this.pop("D-Day 항목 삭제에 실패했습니다")
+        })
     }
   },
   created(){
@@ -302,7 +344,7 @@ export default {
         {
           name: '집으로 돌아간다!',
           start: new Date(this.getSunday()).toISOString().substr(0,10),
-          end: new Date(this.getFriday()).toISOString().substr(0, 10),
+          end: new Date(this.getFriday()).toISOString().substr(0,10),
           value: this.getTimePersent(this.getSunday(), this.getFriday()),
           left_time: this.getDDay(this.getFriday())
         }
@@ -323,7 +365,8 @@ export default {
         setStartTimeNow: false,
         startTimeMenu: false,
         endTime: '',
-        endTimeMenu: false
+        endTimeMenu: false,
+        item_id: ''
       },
       snackbar: false,
       sbMsg: ''

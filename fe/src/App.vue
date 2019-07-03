@@ -2,13 +2,13 @@
   <v-app>
     <v-toolbar app class="primary">
       <v-toolbar-title class="headline white--text">
-        <span>I want to go home</span>
+        <span>I Want to Go Home</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <span class="subheading white--text">{{user_name}}</span>
-  <v-btn icon>
-    <v-icon>more_vert</v-icon>
-  </v-btn>
+      <v-btn v-if="user_name" class="primary" flat @click="logout()">
+        로그아웃
+      </v-btn>
     </v-toolbar>
     <v-content :style="{'background-image': 'url(' + require('./back.png') + ')', 'background-size': '100% 100%'}">
       <router-view></router-view>
@@ -59,7 +59,10 @@
       }
     },
     methods: {
-
+      logout() {
+        localStorage.clear()
+        location.href = '/'
+      }
     }
   }
 </script>

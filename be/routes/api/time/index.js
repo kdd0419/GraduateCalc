@@ -6,7 +6,7 @@ const Time = require('../../../model/time')
 router.get('/', function(req, res, next) {
     Time.find()
       .then(r => {
-        res.send({ success : true, users: r})
+        res.send({ success : true, times: r})
       })
       .catch(e => {
         res.send({ success : false})
@@ -17,7 +17,7 @@ router.get('/:id', function(req, res, next) {
   const id = req.params.id
     Time.find({id: id})
       .then(r => {
-        res.send({ success : true, users: r})
+        res.send({ success : true, times: r})
       })
       .catch(e => {
         res.send({ success : false})
@@ -47,6 +47,17 @@ router.put('/:id', (req, res, next) => {
       res.send({ success: false, msg: e.message })
     })
   // res.send({ success: true, msg: 'put ok' })
+})
+
+router.delete('/:id', (req, res, next) => {
+  const _id = req.params.id
+  Time.deleteOne({ _id: _id})
+  .then(r => {
+    res.send({ success: true, msg: r })
+  })
+  .catch(e => {
+    res.send({ success: false, msg: e.message })
+  })
 })
 
 module.exports = router;
