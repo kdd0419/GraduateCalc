@@ -6,11 +6,11 @@
       <v-list two-line>
         <template v-for="(item, i) in value">
         <v-list-tile
-          :key="item.title"
+          :key="item._id"
           class="pt-2"
         >
           <v-list-tile-content>
-            <v-list-tile-title class="indigo--text title font-weight-bold">{{item.title}} ( {{item.endday}} )</v-list-tile-title>
+            <v-list-tile-title class="indigo--text title font-weight-bold">{{item.name}} ( {{item.end}} )</v-list-tile-title>
             <v-list-tile-sub-title>
               <v-progress-linear
                 v-model="item.value"
@@ -102,7 +102,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey darken-1" flat @click="add.dialog = false">취소  </v-btn>
-          <v-btn color="blue darken-1" flat @click="add.dialog = false">항목 추가</v-btn>
+          <v-btn color="blue darken-1" flat @click="addDDay()">항목 추가</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -183,11 +183,25 @@
     </v-card>
   </v-flex>
 </v-layout>
+<v-snackbar
+  v-model="snackbar"
+  top
+>
+  {{ sbMsg }}
+  <v-btn
+    color="pink"
+    flat
+    @click="snackbar = false"
+  >
+    Close
+  </v-btn>
+</v-snackbar>
 </v-container>
 </template>
 
 
 <script>
+import axios from 'axios'
 export default {
   methods: {
     getTimePersent(start, end) {
@@ -231,27 +245,64 @@ export default {
       var left_day = Math.floor((dur)/(1000*60*60*24))
       var left_hour = Math.floor((dur%(1000*60*60*24))/(1000*60*60))
       return "( D- "+left_day+" days "+ left_hour + " hours )"
+    },
+    addDDay(){
+      this.add.dialog = false
+      axios.post('http://localhost:3000/api/time/', {
+        id: localStorage.user_id,
+        name: this.add.title,
+        start: this.add.startTime,
+        end: this.add.endTime
+      })
+      .then((r) => {
+        if(r.data.success){
+          this.pop("D-Day 항목 추가에 성공했습니다")
+          this.getAllDDay()
+        }
+        else this.pop("D-Day 항목 추가에 실패했습니다")
+      })
+      .catch(() => {
+        this.pop("D-Day 항목 추가에 실패했습니다")
+      })
+    },
+    getAllDDay(){
+      axios.get(`http://localhost:3000/api/time/${localStorage.user_id}`)
+        .then((r) => {
+          this.value = this.value.slice(0,2)
+          var val_rlt = r.data.users
+          while(val_rlt.length > 0){
+            var v = val_rlt.pop()
+            v.left_time = this.getDDay(v.end)
+            v.value = this.getTimePersent(v.start, v.end)
+            this.value.push(v)
+          }
+        })
+    },
+    pop (msg) {
+      this.snackbar = true
+      this.sbMsg = msg
     }
   },
   created(){
     if(!localStorage.user_id){
       location.href = '/'
     }
+    this.getAllDDay()
   },
   data () {
     return {
       value: [
         {
-          title: '졸업일',
-          startday: '2017-03-01',
-          endday: '2020-01-11',
+          name: '졸업일',
+          start: '2017-03-01',
+          end: '2020-01-11',
           value: this.getTimePersent('2017-03-01', '2020-01-11'),
           left_time: this.getDDay('2020-01-11')
         },
         {
-          title: '집으로 돌아간다!',
-          startday: new Date(this.getSunday()).toISOString().substr(0,10),
-          endday: new Date(this.getFriday()).toISOString().substr(0, 10),
+          name: '집으로 돌아간다!',
+          start: new Date(this.getSunday()).toISOString().substr(0,10),
+          end: new Date(this.getFriday()).toISOString().substr(0, 10),
           value: this.getTimePersent(this.getSunday(), this.getFriday()),
           left_time: this.getDDay(this.getFriday())
         }
@@ -273,7 +324,9 @@ export default {
         startTimeMenu: false,
         endTime: '',
         endTimeMenu: false
-      }
+      },
+      snackbar: false,
+      sbMsg: ''
 
     }
   }

@@ -26,7 +26,7 @@ router.get('/:id', function(req, res, next) {
 
 router.post('/', (req, res, next) => {
   const { id, name, start, end } = req.body
-  const u = new Time({ id, name, pw })
+  const u = new Time({ id, name, start, end })
     u.save()
       .then(r => {
         res.send({ success: true, msg: r })
