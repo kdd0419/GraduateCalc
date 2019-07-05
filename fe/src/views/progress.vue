@@ -216,6 +216,11 @@ export default {
       gradDay.setFullYear(gradDay.getFullYear() + (4 - Number(localStorage.user_id[0])), 0, 11)
       return gradDay
     },
+    getGradStart(){
+      var gradDay = new Date()
+      gradDay.setFullYear(gradDay.getFullYear() - (Number(localStorage.user_id[0])-1),  2, 1)
+      return gradDay
+    },
     getSunday() {
       var today = new Date();
       var sun = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay()+1)
@@ -340,9 +345,9 @@ export default {
       value: [
         {
           name: '졸업일',
-          start: '2017-03-01',
+          start: this.getGradStart().toISOString().substr(0, 10),
           end: this.getGrad().toISOString().substr(0, 10),
-          value: this.getTimePersent('2017-03-01', this.getGrad().getTime()),
+          value: this.getTimePersent(this.getGradStart().getTime(), this.getGrad().getTime()),
           left_time: this.getDDay(this.getGrad().getTime())
         },
         {
