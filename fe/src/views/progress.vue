@@ -47,11 +47,11 @@
                 v-model="add.title"
               ></v-text-field>
               </v-flex>
-              <v-flex xs8 sm10>
+              <v-flex xs8 sm9>
                 <v-menu
                    v-model="add.startTimeMenu"
                    :close-on-content-click="false"
-                   :nudge-right="0"
+                   :nudge-right="70"
                    lazy
                    transition="scale-transition"
                    offset-y
@@ -70,14 +70,14 @@
                    <v-date-picker v-model="add.startTime" @input="add.startTimeMenu = false; chkStartIsToday(add)"></v-date-picker>
                  </v-menu>
               </v-flex>
-              <v-flex xs4 sm2 d-flex>
+              <v-flex xs4 sm3 d-flex>
                 <v-checkbox label="오늘로 설정" v-model="add.setStartTimeNow" @change="setStartTime(add)"></v-checkbox>
               </v-flex>
               <v-flex xs12 sm12>
                 <v-menu
                    v-model="add.endTimeMenu"
                    :close-on-content-click="false"
-                   :nudge-right="0"
+                   :nudge-right="70"
                    lazy
                    transition="scale-transition"
                    offset-y
@@ -120,11 +120,11 @@
                 v-model="update.title"
               ></v-text-field>
               </v-flex>
-              <v-flex xs9 sm9>
+              <v-flex xs8 sm9>
                 <v-menu
                    v-model="update.startTimeMenu"
                    :close-on-content-click="false"
-                   :nudge-right="0"
+                   :nudge-right="70"
                    lazy
                    transition="scale-transition"
                    offset-y
@@ -143,14 +143,14 @@
                    <v-date-picker v-model="update.startTime" @input="update.startTimeMenu = false; chkStartIsToday(update)"></v-date-picker>
                  </v-menu>
               </v-flex>
-              <v-flex xs3 sm3 d-flex>
+              <v-flex xs4 sm3 d-flex>
                 <v-checkbox label="오늘로 설정" v-model="update.setStartTimeNow" @change="setStartTime(update)"></v-checkbox>
               </v-flex>
               <v-flex xs12 sm12>
                 <v-menu
                    v-model="update.endTimeMenu"
                    :close-on-content-click="false"
-                   :nudge-right="0"
+                   :nudge-right="70"
                    lazy
                    transition="scale-transition"
                    offset-y
@@ -211,7 +211,11 @@ export default {
       now = new Date(now - new Date().getTimezoneOffset()*60*1000).getTime()
       return Math.round((now-startTime)/(endTime-startTime)*1000)/10
     },
-
+    getGrad(){
+      var gradDay = new Date()
+      gradDay.setFullYear(gradDay.getFullYear() + (4 - Number(localStorage.user_id[0])), 0, 11)
+      return gradDay
+    },
     getSunday() {
       var today = new Date();
       var sun = new Date(today.getFullYear(), today.getMonth(), today.getDate()-today.getDay()+1)
@@ -337,9 +341,9 @@ export default {
         {
           name: '졸업일',
           start: '2017-03-01',
-          end: '2020-01-11',
-          value: this.getTimePersent('2017-03-01', '2020-01-11'),
-          left_time: this.getDDay('2020-01-11')
+          end: this.getGrad().toISOString().substr(0, 10),
+          value: this.getTimePersent('2017-03-01', this.getGrad().getTime()),
+          left_time: this.getDDay(this.getGrad().getTime())
         },
         {
           name: '집으로 돌아간다!',
